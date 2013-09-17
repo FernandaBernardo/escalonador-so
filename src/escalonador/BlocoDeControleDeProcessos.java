@@ -4,17 +4,17 @@ public class BlocoDeControleDeProcessos {
 	Processo processo;
 	String contadorDePrograma;
 	String prioridade;
-	String estadoRegistrador;
-	String[] referenciaCodigo;
-	String nome;
+	int registradorX;
+	int registradorY;
 	
-	public BlocoDeControleDeProcessos(String contadorDePrograma, Processo processo, 
-			String prioridade, String estadoRegistrador, String[] referenciaCodigo, String nome) {
-		this.contadorDePrograma = contadorDePrograma;
+	public BlocoDeControleDeProcessos(Processo processo, String contadorDePrograma, 
+			String prioridade, int registradorX, int registradorY) {
 		this.processo = processo;
+		this.contadorDePrograma = contadorDePrograma;
 		this.prioridade = prioridade;
-		this.estadoRegistrador = estadoRegistrador;
-		this.referenciaCodigo = referenciaCodigo;
-		this.nome = nome;
+		this.registradorX = registradorX;
+		this.registradorY = registradorY;
 	}
+
+	
 }
