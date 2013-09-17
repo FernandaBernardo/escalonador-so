@@ -5,12 +5,12 @@ public class Processo {
 	static final char EXECUTANDO = 'e';
 	static final char BLOQUEADO = 'b';
 	final String [] instrucao; 
-	private String nome;
-	private char estado;
+	String nome;
+	char estado;
 	
-	public Processo(String nome, char estado) {
+	public Processo(String nome, String[] instrucao/*, char estado*/) {
 		this.nome = nome;
-		this.estado = estado;
-		instrucao = new String[21];
+//		this.estado = estado;
+		this.instrucao = instrucao;
 	}
 }
