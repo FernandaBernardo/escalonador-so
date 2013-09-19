@@ -1,6 +1,8 @@
 package escalonador;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class TabelaProcessos {
 	private ArrayList<BlocoDeControleDeProcessos> prontos;
@@ -19,4 +21,15 @@ public class TabelaProcessos {
 		bloqueados.add(bloco);
 	}
 
+	public void ordenaBlocoProntos () {
+		Collections.sort(prontos);
+	}
+	
+	public void imprimirPrioridades () {
+		Iterator<BlocoDeControleDeProcessos> it = prontos.iterator();
+		while (it.hasNext()) {
+			System.out.println(it.next().prioridade);
+		}
+	}
+	
 }

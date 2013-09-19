@@ -1,6 +1,6 @@
 package escalonador;
 
-public class BlocoDeControleDeProcessos {
+public class BlocoDeControleDeProcessos implements Comparable<BlocoDeControleDeProcessos>{
 	Processo processo;
 	int prioridade;
 	int contadorDePrograma;
@@ -14,6 +14,13 @@ public class BlocoDeControleDeProcessos {
 		this.prioridade = prioridade;
 		this.registradorX = registradorX;
 		this.registradorY = registradorY;
+	}
+
+	@Override
+	public int compareTo(BlocoDeControleDeProcessos bcp) {
+		if (this.prioridade > bcp.prioridade) return 1;
+		else if (this.prioridade < bcp.prioridade) return -1;
+		else return 0;
 	}
 
 	

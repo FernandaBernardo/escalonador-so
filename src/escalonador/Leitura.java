@@ -15,6 +15,8 @@ public class Leitura {
 		prioridades = new int[10];
 		lerPrioridades();
 		lerArquivos();
+		tabelaProcessos.ordenaBlocoProntos();
+		tabelaProcessos.imprimirPrioridades();
 	}
 	
 	private void lerPrioridades() throws Exception {
@@ -46,7 +48,6 @@ public class Leitura {
 			aux = br.readLine();
 			if (aux != null) {
 				instrucao[cont] = aux;
-				System.out.println(aux);
 				if (aux.contains("X=")) regX = aux.charAt(2);
 				else if (aux.contains("Y=")) regY = aux.charAt(2);
 				
