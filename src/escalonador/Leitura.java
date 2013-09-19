@@ -42,18 +42,17 @@ public class Leitura {
 		String aux = null;
 		int regX = -1;
 		int regY = -1;
-		while ("SAIDA".equals(aux) && cont<21) {
+		while (!"SAIDA".equals(aux) && cont<21) {
 			aux = br.readLine();
 			if (aux != null) {
 				instrucao[cont] = aux;
-				
+				System.out.println(aux);
 				if (aux.contains("X=")) regX = aux.charAt(2);
 				else if (aux.contains("Y=")) regY = aux.charAt(2);
 				
 				cont++;
 			}
 		}
-		System.out.println("OLá");
 		Processo processo = new Processo(nome, instrucao);
 		
 		criaBCP(processo, regX, regY);
