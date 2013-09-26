@@ -8,9 +8,9 @@ public class Processo {
 	String nome;
 	char estado;
 	
-	public Processo(String nome, String[] instrucao/*, char estado*/) {
+	public Processo(String nome, String[] instrucao, char estado) {
 		this.nome = nome;
-//		this.estado = estado;
+		this.estado = estado;
 		this.instrucao = instrucao;
 	}
 }

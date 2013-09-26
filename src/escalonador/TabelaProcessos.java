@@ -15,6 +15,7 @@ public class TabelaProcessos {
 
 	public void adicionaBlocoProntos(BlocoDeControleDeProcessos bloco) {
 		prontos.add(bloco);
+		ordenaBlocoProntos();
 	}
 	
 	public void adicionaBlocoBloqueados (BlocoDeControleDeProcessos bloco) {
