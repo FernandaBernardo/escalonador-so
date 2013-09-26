@@ -17,8 +17,8 @@ public class BlocoDeControleDeProcessos implements Comparable<BlocoDeControleDeP
 
 	@Override
 	public int compareTo(BlocoDeControleDeProcessos bcp) {
-		if (this.prioridade > bcp.prioridade) return 1;
-		else if (this.prioridade < bcp.prioridade) return -1;
+		if (this.prioridade < bcp.prioridade) return 1;
+		else if (this.prioridade > bcp.prioridade) return -1;
 		else return 0;
 	}
 
