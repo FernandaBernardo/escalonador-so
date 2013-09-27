@@ -5,32 +5,44 @@ import java.util.Collections;
 import java.util.Iterator;
 
 public class TabelaProcessos {
-	private ArrayList<BlocoDeControleDeProcessos> prontos;
-	private ArrayList<BlocoDeControleDeProcessos> bloqueados;	
+	static ArrayList<BCP> prontos;
+	static ArrayList<BCP> bloqueados;	
 
 	public TabelaProcessos(	) {
-		this.prontos = new ArrayList<>();
-		this.bloqueados = new ArrayList<>();
+		prontos = new ArrayList<>();
+		bloqueados = new ArrayList<>();
 	}
 
-	public void adicionaBlocoProntos(BlocoDeControleDeProcessos bloco) {
+	public void adicionaBlocoProntos(BCP bloco) {
 		prontos.add(bloco);
-		ordenaBlocoProntos();
 	}
 	
-	public void adicionaBlocoBloqueados (BlocoDeControleDeProcessos bloco) {
+	public void adicionaBlocoBloqueados (BCP bloco) {
 		bloqueados.add(bloco);
 	}
 
-	public void ordenaBlocoProntos () {
+	public static void ordenaBlocoProntos () {
 		Collections.sort(prontos);
 	}
 	
 	public void imprimirPrioridades () {
-		Iterator<BlocoDeControleDeProcessos> it = prontos.iterator();
+		Iterator<BCP> it = prontos.iterator();
 		while (it.hasNext()) {
 			System.out.println(it.next().prioridade);
 		}
 	}
 	
+	public static boolean zerouCredito () {
+		for (Iterator<BCP> iterator = prontos.iterator(); iterator.hasNext();) {
+			if (iterator.next().credito != 0) return false;
+		}
+		return true;
+	}
+	
+	public static void redistribuiCredito () {
+		for (Iterator<BCP> iterator = prontos.iterator(); iterator.hasNext();) {
+			BCP aux = iterator.next();
+			aux.credito = aux.prioridade;
+		}
+	}
 }

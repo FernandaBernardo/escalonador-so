@@ -10,12 +10,14 @@ public class Leitura {
 	private TabelaProcessos tabelaProcessos;
 	private int[] prioridades;
 	private int numProcesso = 0;
+	private int quantum;
 	
 	public Leitura() throws Exception {
 		tabelaProcessos = new TabelaProcessos();
 		prioridades = new int[maxProcessos];
 		lerPrioridades();
 		lerArquivos();
+		lerQuantum();
 		tabelaProcessos.imprimirPrioridades();
 	}
 	
@@ -33,6 +35,7 @@ public class Leitura {
 			numProcesso = i-1;
 			armazenaProcesso(arquivo);
 		}
+		TabelaProcessos.ordenaBlocoProntos();
 	}
 	
 	private void armazenaProcesso (FileReader arquivo) throws IOException {
@@ -55,11 +58,21 @@ public class Leitura {
 	}
 
 	private void criaBCP(Processo processo) {
-		BlocoDeControleDeProcessos bcp = new BlocoDeControleDeProcessos(processo, 0, prioridades[numProcesso]);
+		BCP bcp = new BCP(processo, 0, prioridades[numProcesso]);
 		tabelaProcessos.adicionaBlocoProntos(bcp);
+	}
+	
+	private void lerQuantum () throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new FileReader(new File("src/processos/quantum.txt")));
+		this.quantum = Integer.parseInt(br.readLine());
+		br.close();
 	}
 
 	public TabelaProcessos getTabelaProcessos() {
 		return tabelaProcessos;
+	}
+
+	public int getQuantum() {
+		return quantum;
 	}
 }
