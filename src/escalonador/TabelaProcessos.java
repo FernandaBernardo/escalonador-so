@@ -20,6 +20,15 @@ public class TabelaProcessos {
 	public void adicionaBlocoBloqueados (BCP bloco) {
 		bloqueados.add(bloco);
 	}
+	
+	public void tiraBloqueadoAdicionaPronto () {
+		for (BCP b : bloqueados) {
+			if(b.espera == 0) {
+				adicionaBlocoProntos(b);
+				bloqueados.remove(b);
+			}
+		}
+	}
 
 	public static void ordenaBlocoProntos () {
 		Collections.sort(prontos);
