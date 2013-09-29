@@ -1,57 +1,36 @@
 package escalonador;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 
 public class TabelaProcessos {
-	static ArrayList<BCP> prontos;
-	static ArrayList<BCP> bloqueados;	
+	static SortedList prontos;
+	static SortedList bloqueados;	
 
 	public TabelaProcessos(	) {
-		prontos = new ArrayList<>();
-		bloqueados = new ArrayList<>();
+		prontos = new SortedList();
+		bloqueados = new SortedList();
 	}
 
-	public void adicionaBlocoProntos(BCP bloco) {
-		prontos.add(bloco);
+	public static void adicionaBlocoProntos(BCP bloco) {
+		prontos.insertSorted(bloco);
 	}
 	
-	public void adicionaBlocoBloqueados (BCP bloco) {
-		bloqueados.add(bloco);
+	public static void adicionaBlocoBloqueados (BCP bloco) {
+		bloqueados.insertSorted(bloco);
 	}
 	
-	public void tiraBloqueadoAdicionaPronto () {
-		for (BCP b : bloqueados) {
-			if(b.espera == 0) {
-				adicionaBlocoProntos(b);
-				bloqueados.remove(b);
-			}
-		}
-	}
-
-	public static void ordenaBlocoProntos () {
-		Collections.sort(prontos);
+	public static BCP removePrimeiroProntos() {
+		return prontos.remove(0);
 	}
 	
-	public void imprimirPrioridades () {
+	public static BCP removePrimeiroBloqueados () {
+		return bloqueados.remove(0);
+	}
+	
+	public static void imprimirPrioridades () {
 		Iterator<BCP> it = prontos.iterator();
 		while (it.hasNext()) {
 			System.out.println(it.next().prioridade);
-		}
-	}
-	
-	public static boolean zerouCredito () {
-		for (Iterator<BCP> iterator = prontos.iterator(); iterator.hasNext();) {
-			if (iterator.next().credito != 0) return false;
-		}
-		return true;
-	}
-	
-	public static void redistribuiCredito () {
-		for (Iterator<BCP> iterator = prontos.iterator(); iterator.hasNext();) {
-			BCP aux = iterator.next();
-			aux.credito = aux.prioridade;
 		}
 	}
 }

@@ -7,18 +7,19 @@ import java.io.IOException;
 
 public class Leitura {
 	private int maxProcessos = 10;
-	private TabelaProcessos tabelaProcessos;
 	private int[] prioridades;
 	private int numProcesso = 0;
 	private int quantum;
+	private TabelaProcessos tabelaProcessos;
 	
 	public Leitura() throws Exception {
-		tabelaProcessos = new TabelaProcessos();
 		prioridades = new int[maxProcessos];
 		lerPrioridades();
 		lerArquivos();
 		lerQuantum();
+		tabelaProcessos = new TabelaProcessos();
 		tabelaProcessos.imprimirPrioridades();
+//		TabelaProcessos.imprimirPrioridades();
 	}
 	
 	private void lerPrioridades() throws Exception {
@@ -35,7 +36,6 @@ public class Leitura {
 			numProcesso = i-1;
 			armazenaProcesso(arquivo);
 		}
-		TabelaProcessos.ordenaBlocoProntos();
 	}
 	
 	private void armazenaProcesso (FileReader arquivo) throws IOException {
@@ -66,10 +66,6 @@ public class Leitura {
 		BufferedReader br = new BufferedReader(new FileReader(new File("src/processos/quantum.txt")));
 		this.quantum = Integer.parseInt(br.readLine());
 		br.close();
-	}
-
-	public TabelaProcessos getTabelaProcessos() {
-		return tabelaProcessos;
 	}
 
 	public int getQuantum() {

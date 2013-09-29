@@ -9,7 +9,6 @@ public class SortedList extends ArrayList<BCP> {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unchecked")
 	public void insertSorted(BCP processo) {
 		add(processo);
 		Comparable<BCP> cmp = (Comparable<BCP>)processo;

@@ -21,12 +21,14 @@ public class BCP implements Comparable<BCP>{
 		this.flag = 0;
 	}
 
+	public void decrementaCredito () {
+		credito--;
+	}
+	
 	@Override
 	public int compareTo(BCP bcp) {
 		if (this.credito < bcp.credito) return 1;
 		else if (this.credito > bcp.credito) return -1;
 		else return 0;
 	}
-
-	
 }
