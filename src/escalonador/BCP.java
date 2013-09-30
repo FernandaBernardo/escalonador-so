@@ -10,9 +10,9 @@ public class BCP implements Comparable<BCP>{
 	int espera;
 	int flag;
 	
-	public BCP(Processo processo, int contadorDePrograma, int prioridade) {
+	public BCP(Processo processo, int prioridade) {
 		this.processo = processo;
-		this.contadorDePrograma = contadorDePrograma;
+		this.contadorDePrograma = 0;
 		this.prioridade = prioridade;
 		this.registradorX = 0;
 		this.registradorY = 0;

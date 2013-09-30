@@ -3,13 +3,8 @@ package escalonador;
 import java.util.Iterator;
 
 public class TabelaProcessos {
-	static SortedList prontos;
-	static SortedList bloqueados;	
-
-	public TabelaProcessos(	) {
-		prontos = new SortedList();
-		bloqueados = new SortedList();
-	}
+	static SortedList prontos = new SortedList();
+	static SortedList bloqueados = new SortedList();	
 
 	public static void adicionaBlocoProntos(BCP bloco) {
 		prontos.insertSorted(bloco);
@@ -31,6 +26,15 @@ public class TabelaProcessos {
 		Iterator<BCP> it = prontos.iterator();
 		while (it.hasNext()) {
 			System.out.println(it.next().prioridade);
+		}
+	}
+	
+	public static void imprimirInstrucoes () {
+		for (BCP p : prontos) {
+			for (String instrucao : p.processo.instrucao) {
+				System.out.println(instrucao);
+			}
+			System.out.println();
 		}
 	}
 }

@@ -10,16 +10,13 @@ public class Leitura {
 	private int[] prioridades;
 	private int numProcesso = 0;
 	private int quantum;
-	private TabelaProcessos tabelaProcessos;
 	
 	public Leitura() throws Exception {
 		prioridades = new int[maxProcessos];
 		lerPrioridades();
 		lerArquivos();
 		lerQuantum();
-		tabelaProcessos = new TabelaProcessos();
-		tabelaProcessos.imprimirPrioridades();
-//		TabelaProcessos.imprimirPrioridades();
+		TabelaProcessos.imprimirPrioridades();
 	}
 	
 	private void lerPrioridades() throws Exception {
@@ -58,8 +55,8 @@ public class Leitura {
 	}
 
 	private void criaBCP(Processo processo) {
-		BCP bcp = new BCP(processo, 0, prioridades[numProcesso]);
-		tabelaProcessos.adicionaBlocoProntos(bcp);
+		BCP bcp = new BCP(processo, prioridades[numProcesso]);
+		TabelaProcessos.adicionaBlocoProntos(bcp);
 	}
 	
 	private void lerQuantum () throws NumberFormatException, IOException {

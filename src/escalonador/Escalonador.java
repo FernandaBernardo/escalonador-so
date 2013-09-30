@@ -15,26 +15,42 @@ public class Escalonador {
 		System.out.println("prontos: "+ prontos.size());
 		System.out.println("bloqueados: "+ bloqueados.size());
 		System.out.println("primeiro pronto: "+ prontos.get(0).prioridade);
+//		TabelaProcessos.imprimirInstrucoes();
 		
 		while (prontos.size() > 0 || bloqueados.size() > 0) {
-			int cont = 0;
-			boolean parouAntesQuantum = false;
-			BCP atual = TabelaProcessos.removePrimeiroProntos();
-			while (cont <= quantum) {
-				atual.decrementaCredito();
-				
-				String instrucao = atual.processo.instrucao[atual.contadorDePrograma];
-				if (instrucao == "E/S" && atual.flag == 0) {
-					entradaSaida(atual);
-					parouAntesQuantum = true;
-					break;
+			if (prontos.size()>0) {
+				int cont = 0;
+				boolean parou = false;
+				BCP atual = TabelaProcessos.removePrimeiroProntos();
+				while (atual != null && cont < quantum) {
+					atual.decrementaCredito();
+					
+					System.out.println(atual.contadorDePrograma);
+					String instrucao = atual.processo.instrucao[atual.contadorDePrograma];
+					System.out.println(instrucao);
+					if ("E/S".equals(instrucao)) {
+						if (atual.flag == 0) {
+							entradaSaida(atual);
+							parou = true;
+							break;
+						}
+						else {
+							atual.flag = 0;
+						}
+					}
+					else if ("SAIDA".equals(instrucao)) {
+						System.out.println("Olá");
+						prontos.remove(atual);
+						parou = true;
+						break;
+					}
+					
+					atual.contadorDePrograma++;
+					System.out.println("cont: " + cont);
+					cont++;
 				}
-				else if (instrucao == "E/S" && atual.flag == 1) atual.flag = 0;
-				
-				atual.contadorDePrograma++;
-				cont++;
+				if (!parou) TabelaProcessos.adicionaBlocoProntos(atual);
 			}
-			if (!parouAntesQuantum) TabelaProcessos.adicionaBlocoProntos(atual);
 			decrementaBloqueados();
 			verificaZeroEspera();
 			verificaZeroCreditosProntos();
@@ -60,17 +76,21 @@ public class Escalonador {
 
 	private static void decrementaBloqueados () {
 		for (BCP b : bloqueados) {
-			b.espera--;
+			if (b.espera > 0) b.espera--;
 		}
 	}
 	
 	private static void verificaZeroEspera () {
+		int cont = 0;
 		for (BCP b : bloqueados) {
 			if (b.espera == 0) {
 				TabelaProcessos.adicionaBlocoProntos(b);
-				TabelaProcessos.removePrimeiroBloqueados();
+				cont++;
 			}
-			else return;
+			else break;
+		}
+		for (int i = 0; i < cont; i++) {
+			TabelaProcessos.removePrimeiroBloqueados();
 		}
 	}
 }
