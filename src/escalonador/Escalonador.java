@@ -25,9 +25,8 @@ public class Escalonador {
 				while (atual != null && cont < quantum) {
 					atual.decrementaCredito();
 					
-					System.out.println(atual.contadorDePrograma);
 					String instrucao = atual.processo.instrucao[atual.contadorDePrograma];
-					System.out.println(instrucao);
+					System.out.println(instrucao + " " + atual.processo.nome);
 					if ("E/S".equals(instrucao)) {
 						if (atual.flag == 0) {
 							entradaSaida(atual);
@@ -39,14 +38,18 @@ public class Escalonador {
 						}
 					}
 					else if ("SAIDA".equals(instrucao)) {
-						System.out.println("Olá");
 						prontos.remove(atual);
 						parou = true;
 						break;
 					}
+					else if (instrucao.contains("X=")) {
+						atual.registradorX = instrucao.charAt(2);
+					}
+					else if (instrucao.contains("Y=")) {
+						atual.registradorY = instrucao.charAt(2);
+					}
 					
 					atual.contadorDePrograma++;
-					System.out.println("cont: " + cont);
 					cont++;
 				}
 				if (!parou) TabelaProcessos.adicionaBlocoProntos(atual);

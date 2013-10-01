@@ -25,7 +25,8 @@ public class TabelaProcessos {
 	public static void imprimirPrioridades () {
 		Iterator<BCP> it = prontos.iterator();
 		while (it.hasNext()) {
-			System.out.println(it.next().prioridade);
+			BCP next = it.next();
+			System.out.println(next.prioridade + " " + next.processo.nome);
 		}
 	}
 	
