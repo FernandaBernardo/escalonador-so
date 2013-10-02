@@ -6,29 +6,31 @@ import static escalonador.TabelaProcessos.prontos;
 public class Escalonador {
 	
 	private static int quantum;
+	private static int interrompido = 0;
+	private static int instrucaoQuantum = 0;
+	private static int numQuantum = 0;
 	
 	public static void main(String[] args) throws Exception {
 		Leitura leitura = new Leitura();
+		for (BCP bcp : prontos) {
+			System.out.println("Carregando " + bcp.processo.nome);
+		}
 		
 		quantum = leitura.getQuantum();
-		
-		System.out.println("prontos: "+ prontos.size());
-		System.out.println("bloqueados: "+ bloqueados.size());
-		System.out.println("primeiro pronto: "+ prontos.get(0).prioridade);
-//		TabelaProcessos.imprimirInstrucoes();
 		
 		while (prontos.size() > 0 || bloqueados.size() > 0) {
 			if (prontos.size()>0) {
 				int cont = 0;
 				boolean parou = false;
 				BCP atual = TabelaProcessos.removePrimeiroProntos();
+				System.out.println("Executando " + atual.processo.nome);
 				while (atual != null && cont < quantum) {
 					atual.decrementaCredito();
 					
 					String instrucao = atual.processo.instrucao[atual.contadorDePrograma];
-					System.out.println(instrucao + " " + atual.processo.nome);
 					if ("E/S".equals(instrucao)) {
 						if (atual.flag == 0) {
+							System.out.println("E/S iniciada em " + atual.processo.nome);
 							entradaSaida(atual);
 							parou = true;
 							break;
@@ -38,26 +40,36 @@ public class Escalonador {
 						}
 					}
 					else if ("SAIDA".equals(instrucao)) {
+						System.out.println(atual.processo.nome + " terminado. X=" +atual.registradorX + ". Y=" +atual.registradorY);
 						prontos.remove(atual);
 						parou = true;
 						break;
 					}
 					else if (instrucao.contains("X=")) {
-						atual.registradorX = instrucao.charAt(2);
+						atual.registradorX = Integer.parseInt(instrucao.substring(2));
 					}
 					else if (instrucao.contains("Y=")) {
-						atual.registradorY = instrucao.charAt(2);
+						atual.registradorY = Integer.parseInt(instrucao.substring(2));
 					}
 					
 					atual.contadorDePrograma++;
 					cont++;
 				}
+				System.out.println("Interrompendo " + atual.processo.nome+ " após " + cont + " instruções");
+				interrompido++;
+				numQuantum++;
+				instrucaoQuantum += cont;
 				if (!parou) TabelaProcessos.adicionaBlocoProntos(atual);
 			}
 			decrementaBloqueados();
 			verificaZeroEspera();
 			verificaZeroCreditosProntos();
 		}
+		double mediaTrocas = interrompido/10;
+		double mediaInstrucao = instrucaoQuantum/numQuantum;
+		System.out.println("media de trocas: " + mediaTrocas);
+		System.out.println("media de instruções: " + mediaInstrucao);
+		System.out.println("quantum: " +quantum);
 	}
 	
 	private static void entradaSaida (BCP processo) {
