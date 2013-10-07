@@ -26,7 +26,8 @@ public class TabelaProcessos {
 		Iterator<BCP> it = prontos.iterator();
 		while (it.hasNext()) {
 			BCP next = it.next();
-			System.out.println(next.prioridade + " " + next.processo.nome);
+			//System.out.println(next.prioridade + " " + next.processo.nome);
+                        //System.out.println(next.processo.nome);
 		}
 	}
 	
