@@ -42,6 +42,7 @@ public class Escalonador {
 				BCP atual = TabelaProcessos.removePrimeiroProntos(); // o primeiro bcp da lista de prontos é removido
 				atual.decrementaCredito(); // o crédito de sua prioridade é decrementado
 				
+				atual.processo.setEstado(Processo.EXECUTANDO);
 				System.out.println("Executando " + atual.processo.nome);
 				
 				while (atual != null && cont < quantum) {// enquanto ainda puder rodar dentro do quantum
@@ -91,7 +92,10 @@ public class Escalonador {
 				instrucaoQuantum += cont; //conta o número de instruções a cada quantum
 				
 				//se o processo não foi para a lista de bloqueados, ele volta para a lista de prontos
-				if (!parou) TabelaProcessos.adicionaBlocoProntos(atual); 
+				if (!parou) {
+					atual.processo.setEstado(Processo.PRONTO);
+					TabelaProcessos.adicionaBlocoProntos(atual);
+				}
 			}
 			
 			decrementaBloqueados(); //decrementa a espera de cada processo da lista de bloqueados
@@ -114,6 +118,7 @@ public class Escalonador {
 	}
 
 	private static void entradaSaida(BCP processo) {
+		processo.processo.setEstado(Processo.BLOQUEADO);
 		TabelaProcessos.adicionaBlocoBloqueados(processo); //adiciona o processo à lista de bloqueados
 		int index = bloqueados.indexOf(processo);
 		bloqueados.get(index).espera = 2; //atualiza a espera do processo para 2
@@ -143,6 +148,7 @@ public class Escalonador {
 		//conta quantos processos tem a espera igual a zero
 		for (BCP b : bloqueados) {
 			if (b.espera == 0) {
+				b.processo.setEstado(Processo.PRONTO);
 				TabelaProcessos.adicionaBlocoProntos(b);
 				cont++;
 			} else break;
