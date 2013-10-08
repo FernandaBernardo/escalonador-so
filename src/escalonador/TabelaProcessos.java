@@ -1,6 +1,8 @@
 package escalonador;
 
-import java.util.Iterator;
+/* Classe que representa a Tabela de Processos
+ * A tabela de processos possui duas listas de processos, prontos e bloqueados 
+ */
 
 public class TabelaProcessos {
 	static SortedList prontos = new SortedList();
@@ -20,23 +22,5 @@ public class TabelaProcessos {
 	
 	public static BCP removePrimeiroBloqueados () {
 		return bloqueados.remove(0);
-	}
-	
-	public static void imprimirPrioridades () {
-		Iterator<BCP> it = prontos.iterator();
-		while (it.hasNext()) {
-			BCP next = it.next();
-			//System.out.println(next.prioridade + " " + next.processo.nome);
-                        //System.out.println(next.processo.nome);
-		}
-	}
-	
-	public static void imprimirInstrucoes () {
-		for (BCP p : prontos) {
-			for (String instrucao : p.processo.instrucao) {
-				System.out.println(instrucao);
-			}
-			System.out.println();
-		}
 	}
 }

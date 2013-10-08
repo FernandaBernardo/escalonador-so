@@ -7,136 +7,150 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class Escalonador {
-                
-	private static int quantum; //quantidade de quantum para cada processo
-	private static int interrompido = 0; //contador para a média de processos interrompidos 
-	private static int instrucaoQuantum = 0; //contador para a média do numero de instruções por quantum
-	private static int numQuantum = 0;//contador geral de quantuns, em relação a todos os processos
-	
+
+	private static int quantum; // quantidade de quantum para cada processo
+	private static int interrompido = 0; // contador para a média de processos interrompidos
+	private static int instrucaoQuantum = 0; // contador para a média do número de instruções por quantum
+	private static int numQuantum = 0;// contador geral de quantuns, em relação a todos os processos
+	private final static int totalProcessos = 10; //total de processos a serem executados
+
 	public static void main(String[] args) throws Exception {
-            Leitura leitura = new Leitura();
-            quantum = leitura.getQuantum();
-            String numero = Integer.toString(quantum);
-            
-            //Criando o arquivo LOG
-            if(numero.length()==1){
-                System.setOut(new PrintStream(new FileOutputStream("0"+quantum+".txt")));   
-            }else{
-                System.setOut(new PrintStream(new FileOutputStream(quantum+".txt")));
-            }
-                    
-            //Carregando os processos após serem ordenados conforme sua prioridade 
-            for (BCP bcp : prontos) {
-                System.out.println("Carregando " + bcp.processo.nome);
-            }
+		Leitura leitura = new Leitura(); //lê todos os arquivos e adiciona os processos e prioridades na Tabela de Processos
 		
-            //Enquanto a fila de processos prontos ou a fila de processos bloqueados forem maiores que 0:
-            while (prontos.size() > 0 || bloqueados.size() > 0) {
-                //Se a fila de prontos não estiver vazia: 
-                if (prontos.size()>0) {
-                    int cont = 0;
-                    boolean saida = false;
-                    boolean parou = false;
-                    BCP atual = TabelaProcessos.removePrimeiroProntos(); //O bcp do atual processo é removido da fila de prontos
-                    atual.decrementaCredito(); //O crédito de sua prioridade é decrementado
-                    System.out.println("Executando " + atual.processo.nome);
-                    //Enquanto o processo atual ainda precisar ser rodado e ainda estiver dentro de seu período de quantum: 
-                    while (atual != null && cont < quantum) {			
-                        String instrucao = atual.processo.instrucao[atual.contadorDePrograma];
-                        //Se for uma instrução de entrada e saída, então: 
-                        if ("E/S".equals(instrucao)) {
-                            if (atual.flag == 0) {
-				System.out.println("E/S iniciada em " + atual.processo.nome);
-				entradaSaida(atual);
-				parou = true;
-				break;
-                            }
-                            else {
-                                atual.flag = 0;
-                            }
-                        }
-                        //Se a instrução for "SAIDA" indicqa que tal processo chegou ao seu fim: 
-			else if ("SAIDA".equals(instrucao)) {
-                            System.out.println(atual.processo.nome + " terminado. X=" +atual.registradorX + ". Y=" +atual.registradorY);
-                            prontos.remove(atual);
-                            parou = true;
-                            saida = true;
-                            break;
-			}
-                        //Se a instrução for de atribuição ao contador X:  
-			else if (instrucao.contains("X=")) {
-                            atual.registradorX = Integer.parseInt(instrucao.substring(2));
-			}
-                        //Se a instrução for de atribuição ao contador Y:  
-			else if (instrucao.contains("Y=")) {
-                            atual.registradorY = Integer.parseInt(instrucao.substring(2));
-			}
+		quantum = leitura.getQuantum(); //armazenando o valor do quantum 
+		
+		// criando o arquivo LOG
+		if (quantum < 10 && quantum > 0) {
+			System.setOut(new PrintStream(new FileOutputStream("log0" + quantum + ".txt")));
+		} else {
+			System.setOut(new PrintStream( new FileOutputStream("log"+quantum + ".txt")));
+		}
+
+		// carregando os processos após serem ordenados conforme sua prioridade
+		for (BCP bcp : prontos) {
+			System.out.println("Carregando " + bcp.processo.nome);
+		}
+
+		// enquanto a fila de processos prontos ou a fila de processos bloqueados forem maiores que 0
+		while (prontos.size() > 0 || bloqueados.size() > 0) {
+			if (prontos.size() > 0) { // Se tiver algum processo pronto
+				
+				int cont = 0; //contador para não deixar passar o valor do quantum
+				boolean saida = false; // booleano para saber se o processo chegou ao final (SAIDA)
+				boolean parou = false; // booleano que serve para saber se o processo parou antes do quantum
+				
+				BCP atual = TabelaProcessos.removePrimeiroProntos(); // o primeiro bcp da lista de prontos é removido
+				atual.decrementaCredito(); // o crédito de sua prioridade é decrementado
+				
+				System.out.println("Executando " + atual.processo.nome);
+				
+				while (atual != null && cont < quantum) {// enquanto ainda puder rodar dentro do quantum
+					String instrucao = atual.processo.instrucao[atual.contadorDePrograma]; // instrução que será rodada agora
 					
-			atual.contadorDePrograma++; //incrementa o contador de programas; 
-			cont++; //incrementa o contador de instruções;
-                    }
-                    /*Quando o processo chega nesse ponto ele por algum motivo chegou ao seu final. seja por um processo 
-                    de entrada e saida, termino de quantum ou termino de instruções*/
-                    if(!saida){
-                        if(cont==0 || cont==1 ){
-                            System.out.println("Interrompendo " + atual.processo.nome+ " após " + cont + " instrução");
-                        }else{
-                            System.out.println("Interrompendo " + atual.processo.nome+ " após " + cont + " instruções");
-                        }
-                    }
-                    interrompido++; //contador de interrompido é incrementado; 
-                    numQuantum++;//incrementa o quantum 
-                    instrucaoQuantum += cont;
-                    if (!parou) TabelaProcessos.adicionaBlocoProntos(atual);
-                }
-		decrementaBloqueados();
-		verificaZeroEspera();
-		verificaZeroCreditosProntos();
-            }
-            double mediaTrocas = interrompido/10;
-            double mediaInstrucao = instrucaoQuantum/numQuantum;
-            System.out.println("media de trocas: " + mediaTrocas);
-            System.out.println("media de instruções: " + mediaInstrucao);
-            System.out.println("quantum: " +quantum);
-	}
-	
-	private static void entradaSaida (BCP processo) {
-            TabelaProcessos.adicionaBlocoBloqueados(processo);
-            int index = bloqueados.indexOf(processo);
-            bloqueados.get(index).espera = 2;
-            bloqueados.get(index).flag = 1;
-	}
-	
-	private static boolean verificaZeroCreditosProntos () {
-            for (BCP p : prontos) {
-                if (p.credito != 0) return false; 
-            }
+					if ("E/S".equals(instrucao)) { // se for uma instrução de entrada e saída
+						if (atual.flag == 0) { //se a flag for 0, ou seja, se ainda não tiver sido executada a instrução
+							System.out.println("E/S iniciada em " +atual.processo.nome);
+							entradaSaida(atual);
+							parou = true; //processo irá parar antes do quantum terminar
+							break; //para esse processo
+						} else {
+							atual.flag = 0; //se já foi executada, volta a flag para 0
+						}
+					}
+					
+					else if ("SAIDA".equals(instrucao)) { // se a instrução for "SAIDA" indica que tal processo chegou ao seu fim
+						System.out.println(atual.processo.nome + " terminado. X=" + atual.registradorX + ". Y=" + atual.registradorY);
+						prontos.remove(atual); //remove o processo da lista de prontos
+						parou = true; //processo irá parar
+						saida = true; //chegou ao final
+						break;
+					}
+					
+					else if (instrucao.contains("X=")) { // se a instrução for atribuindo um valor ao registrador X
+						atual.registradorX = Integer.parseInt(instrucao.substring(2));
+					}
+					
+					else if (instrucao.contains("Y=")) { // se a instrução for atribuindo um valor ao registrador Y
+						atual.registradorY = Integer.parseInt(instrucao.substring(2));
+					}
+
+					atual.contadorDePrograma++; // incrementa o contador de programa do processo atual
+					cont++; // incrementa o contador de instruções
+				}
+				
+				if (!saida) { //Se o processo atual não acabou (não chegou na SAIDA), portanto ele foi interrompido
+					if (cont == 0 || cont == 1) {
+						System.out.println("Interrompendo "	+ atual.processo.nome + " após " + cont	+ " instrução");
+					} else {
+						System.out.println("Interrompendo "	+ atual.processo.nome + " após " + cont	+ " instruções");
+					}
+				}
+				
+				interrompido++; // contador de interrompido é incrementado
+				numQuantum++;// incrementa o quantum
+				instrucaoQuantum += cont; //conta o número de instruções a cada quantum
+				
+				//se o processo não foi para a lista de bloqueados, ele volta para a lista de prontos
+				if (!parou) TabelaProcessos.adicionaBlocoProntos(atual); 
+			}
+			
+			decrementaBloqueados(); //decrementa a espera de cada processo da lista de bloqueados
+			verificaZeroEspera(); //verifica se tem algum processo na lista de bloqueados com 0 de espera 
+			verificaZeroCreditosProntos(); //verifica se todos os créditos da lista de prontos é 0, se sim já seta com a prioridade
+		}
 		
-            for (BCP p : prontos) {
-                p.credito = p.prioridade;
-            }
-            
-            return true;
+		System.out.println("media de trocas: " + mediaTrocas(interrompido));
+		System.out.println("media de instruções: " + mediaInstrucao(instrucaoQuantum, numQuantum));
+		
+		System.out.println("quantum: " + quantum);
+	}
+	
+	private static double mediaTrocas (int interrompido) {
+		return interrompido / totalProcessos;
+	}
+	
+	private static double mediaInstrucao (int instrucaoQuantum, int numQuantum) {
+		return instrucaoQuantum / numQuantum;
 	}
 
-	private static void decrementaBloqueados () {
-            for (BCP b : bloqueados) {
-                if (b.espera > 0) b.espera--;
-            }
+	private static void entradaSaida(BCP processo) {
+		TabelaProcessos.adicionaBlocoBloqueados(processo); //adiciona o processo à lista de bloqueados
+		int index = bloqueados.indexOf(processo);
+		bloqueados.get(index).espera = 2; //atualiza a espera do processo para 2
+		bloqueados.get(index).flag = 1; //atualiza o flag para 1, ou seja, a instrução já foi executada
 	}
-	
-	private static void verificaZeroEspera () {
-            int cont = 0;
-            for (BCP b : bloqueados) {
-                if (b.espera == 0) {
-                    TabelaProcessos.adicionaBlocoProntos(b);
-                    cont++;
+
+	private static boolean verificaZeroCreditosProntos() {
+		for (BCP p : prontos) {
+			if (p.credito != 0)	return false; //se algum crédito for diferente de 0, já retorna falso
 		}
-		else break;
-            }
+		//se todos os créditos forem iguais a 0, atualiza todos os créditos à sua prioridade correspondente
+		for (BCP p : prontos) {
+			p.credito = p.prioridade;
+		}
+		return true;
+	}
+
+	private static void decrementaBloqueados() {
+		for (BCP b : bloqueados) {
+			if (b.espera > 0) b.espera--; //diminui 1 da espera
+		}
+	}
+
+	private static void verificaZeroEspera() {
+		int cont = 0;
 		
-            for (int i = 0; i < cont; i++) {
-                TabelaProcessos.removePrimeiroBloqueados();
-            }
+		//conta quantos processos tem a espera igual a zero
+		for (BCP b : bloqueados) {
+			if (b.espera == 0) {
+				TabelaProcessos.adicionaBlocoProntos(b);
+				cont++;
+			} else break;
+		}
+		
+		//remove todos os bloqueados com espera igual a zero
+		for (int i = 0; i < cont; i++) {
+			TabelaProcessos.removePrimeiroBloqueados();
+		}
 	}
 }
