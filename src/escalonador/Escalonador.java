@@ -109,11 +109,11 @@ public class Escalonador {
 		System.out.println("quantum: " + quantum);
 	}
 	
-	private static double mediaTrocas (int interrompido) {
+	private static double mediaTrocas (double interrompido) {
 		return interrompido / totalProcessos;
 	}
 	
-	private static double mediaInstrucao (int instrucaoQuantum, int numQuantum) {
+	private static double mediaInstrucao (double instrucaoQuantum, double numQuantum) {
 		return instrucaoQuantum / numQuantum;
 	}
 
